@@ -1,7 +1,15 @@
 var issueContainerEl = document.querySelector("#issues-container");
 var limitWarningEl = document.querySelector("#limit-warning");
+var repoNameEl = document.querySelector("#repo-name");
 
-getRepoIssues("octocat/Spoon-Knife");
+getRepos();
+
+function getRepos() {
+    var query = document.location.search;
+    var repoName = query.split("=")[1];
+    getRepoIssues(repoName);
+    repoNameEl.textContent = repoName;
+}
 
 function getRepoIssues(repo) {
     var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
@@ -59,3 +67,4 @@ function displayWarning(repo) {
 
     limitWarningEl.appendChild(linkEl);
 }
+
