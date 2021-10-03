@@ -2,9 +2,28 @@ var userFormEl = document.querySelector("#user-form");
 var nameInputEl = document.querySelector("#username");
 var repoContainerEl = document.querySelector("#repos-container");
 var repoSearchTerm = document.querySelector("#repo-search-term");
+var languageButtonsEl = document.querySelector("#language-buttons")
 
 userFormEl.addEventListener("submit", formSubmitHandler);
+languageButtonsEl.addEventListener("click", buttonClickHandler);
+// Submits repo name to be queried.
+function formSubmitHandler(event) {
+    event.preventDefault();
 
+    var username = nameInputEl.value.trim();
+
+    if (username) {
+        getUserRepos(username);
+        nameInputEl.value = "";
+    } else {
+        alert("Please enter a GitHub username.");
+    }
+}
+// Searches for the language respectively associated wiht button (event.target).
+function buttonClickHandler(event) {
+    getFeaturedRepos(event.target.getAttribute("data-language"));
+}
+// Retrieves repository data from the GitHub API.
 function getUserRepos(user) {
     var apiUrl = "https://api.github.com/users/" + user + "/repos";
 
@@ -20,20 +39,7 @@ function getUserRepos(user) {
         alert("Unable to connect to GitHub");
     });
 }
-
-function formSubmitHandler(event) {
-    event.preventDefault();
-
-    var username = nameInputEl.value.trim();
-
-    if (username) {
-        getUserRepos(username);
-        nameInputEl.value = "";
-    } else {
-        alert("Please enter a GitHub username.");
-    }
-}
-
+// Displays repositories as links to the detailed issues page.
 function displayRepos(repos, searchTerm) {
     if (repos.length === 0) {
         repoContainerEl.textContent = "No repositories found.";
@@ -68,4 +74,18 @@ function displayRepos(repos, searchTerm) {
         repoEl.appendChild(statusEl);
         repoContainerEl.appendChild(repoEl);
     }
+}
+// Retrieves featured repository data based on the language from the GitHub API.
+function getFeaturedRepos(language) {
+    var apiUrl = "https://api.github.com/search/repositories?q=" + language + "+is:featured&sort=help-wanted-issues";
+
+    fetch(apiUrl).then(function (response) {
+        if (response.ok) {
+            response.json().then(function (data) {
+                displayRepos(data.items, language);
+            });
+        } else {
+            alert('Error: GitHub User Not Found');
+        }
+    });
 }

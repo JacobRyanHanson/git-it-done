@@ -3,14 +3,14 @@ var limitWarningEl = document.querySelector("#limit-warning");
 var repoNameEl = document.querySelector("#repo-name");
 
 getRepos();
-
+// Checks url for the repository query parameter.
 function getRepos() {
     var query = document.location.search;
     var repoName = query.split("=")[1];
     getRepoIssues(repoName);
     repoNameEl.textContent = repoName;
 }
-
+// Retrieves repository data based on the chosen user from the GitHub API.
 function getRepoIssues(repo) {
     var apiUrl = "https://api.github.com/repos/" + repo + "/issues?direction=asc";
 
@@ -28,7 +28,7 @@ function getRepoIssues(repo) {
         }
     });
 }
-
+// Displays issues related to the selected repository.
 function displayIssues(issues) {
     if (issues.length === 0) {
         issueContainerEl.textContent = "This repo has no open issues!";
@@ -56,7 +56,7 @@ function displayIssues(issues) {
         issueContainerEl.appendChild(issueEl);
     }
 }
-
+// Should the repository contain more than 30 issues a link is proived to the original.
 function displayWarning(repo) {
     limitWarningEl.textContent = "To see more than 30 issues, visit ";
 
@@ -67,4 +67,3 @@ function displayWarning(repo) {
 
     limitWarningEl.appendChild(linkEl);
 }
-
